@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Connexion — DermAI{% endblock %}
+
+{% block extra_style %}
+<style>
+    /* Centre la page entière verticalement */
+    html, body { height: 100%; }
+
+    .page-wrapper {
+        min-height: 100vh !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 24px !important;
+    }
+
+    .login-box { width: 100%; max-width: 380px; }
+
+    .login-header { text-align: center; margin-bottom: 28px; }
+
+    .login-logo {
+        display: inline-flex; align-items: center; gap: 10px;
+        font-size: 24px; font-weight: 700; color: #1565C0; margin-bottom: 8px;
+    }
+    .login-logo-icon {
+        width: 46px; height: 46px; background: #1565C0;
+        border-radius: 13px; display: flex; align-items: center;
+        justify-content: center; font-size: 22px;
+    }
+    .login-tagline { font-size: 13px; color: #6B7D8F; }
+
+    .login-card {
+        background: #fff; border-radius: 16px;
+        border: 1.5px solid #DCE8F5; padding: 28px;
+    }
+    .login-card h2 { font-size: 17px; font-weight: 700; color: #1A2B45; margin-bottom: 4px; }
+    .login-card p  { font-size: 12px; color: #6B7D8F; margin-bottom: 22px; }
+
+    .form-group { margin-bottom: 16px; }
+    .field-input { margin-bottom: 0; }
+    .btn-blue { width: 100%; margin-top: 4px; }
+
+    .register-link {
+        text-align: center; margin-top: 14px;
+        font-size: 12px; color: #6B7D8F;
+    }
+    .register-link a { color: #1565C0; font-weight: 700; text-decoration: none; }
+    .register-link a:hover { text-decoration: underline; }
+
+    .login-footer { text-align: center; margin-top: 16px; font-size: 11px; color: #90A4AE; }
+    .dev-credit  { text-align: center; margin-top: 6px; font-size: 11px; color: #B0BEC5; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <div class="login-header">
+        <div class="login-logo">
+            <div class="login-logo-icon">🩺</div>
+            DermAI
+        </div>
+        <div class="login-tagline">Plateforme de diagnostic dermatologique par IA</div>
+    </div>
+
+    <div class="login-card">
+        <h2>👋 Connexion</h2>
+        <p>Accédez à votre espace médecin</p>
+
+        <form method="POST" action="/">
+            <div class="form-group">
+                <div class="field-label">Nom d'utilisateur</div>
+                <input class="field-input" type="text" name="username"
+                       placeholder="Nom d'utilisateur" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <div class="field-label">Mot de passe</div>
+                <input class="field-input" type="password" name="password"
+                       placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-blue">Se connecter →</button>
+        </form>
+
+        <div class="register-link">
+            Pas encore de compte ? <a href="/register">Créer un compte</a>
+        </div>
+    </div>
+
+    <div class="login-footer">
+        DermAI — Outil d'aide au diagnostic. Ne remplace pas l'avis médical.
+    </div>
+    <div class="dev-credit">
+        Développé par <strong>Takali Yasmine</strong>
+    </div>
+</div>
+{% endblock %}

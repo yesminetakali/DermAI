@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Résultat — DermAI{% endblock %}
+
+{% block extra_style %}
+<style>
+    .result-wrapper {
+        max-width: 580px;
+        margin: 0 auto;
+    }
+
+    .page-header { margin-bottom: 22px; }
+    .page-header h1 { font-size: 22px; font-weight: 700; color: #1A2B45; margin-bottom: 4px; }
+    .page-header p  { font-size: 13px; color: #6B7D8F; }
+
+    /* ── Result hero ── */
+    .result-hero {
+        text-align: center;
+        padding: 32px 20px 24px;
+        margin-bottom: 0;
+    }
+
+    .result-icon { font-size: 54px; margin-bottom: 14px; }
+
+    .result-label {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .result-label.benign   { color: #2E7D32; }
+    .result-label.malignant { color: #C62828; }
+
+    .result-sub { font-size: 13px; color: #6B7D8F; }
+
+    /* ── Confidence ring ── */
+    .confidence-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px;
+        padding: 20px;
+        border-top: 1.5px solid #F0F5FB;
+        border-bottom: 1.5px solid #F0F5FB;
+        margin: 0 -24px;
+    }
+
+    .conf-ring {
+        width: 90px; height: 90px;
+        border-radius: 50%;
+        border: 6px solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .conf-ring.benign   { border-color: #C8E6C9; background: #F1F8F1; }
+    .conf-ring.malignant { border-color: #FFCDD2; background: #FFF5F5; }
+
+    .conf-num { font-size: 20px; font-weight: 700; }
+    .conf-ring.benign   .conf-num { color: #2E7D32; }
+    .conf-ring.malignant .conf-num { color: #C62828; }
+
+    .conf-lbl { font-size: 9px; font-weight: 700; color: #90A4AE; text-transform: uppercase; }
+
+    .conf-info { text-align: center; }
+    .conf-title { font-size: 13px; color: #6B7D8F; margin-bottom: 4px; }
+    .conf-value { font-size: 24px; font-weight: 700; }
+    .benign  .conf-value { color: #2E7D32; }
+    .malignant .conf-value { color: #C62828; }
+    .conf-detail { font-size: 11px; color: #90A4AE; margin-top: 2px; }
+
+    /* ── Recommendation banner ── */
+    .reco-banner {
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .reco-banner.benign   { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+    .reco-banner.malignant { background: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+    .reco-banner i { font-size: 18px; flex-shrink: 0; }
+
+    /* ── Image preview ── */
+    .image-card { text-align: center; }
+    .image-card img {
+        max-width: 100%;
+        max-height: 240px;
+        border-radius: 10px;
+        border: 1.5px solid #DCE8F5;
+        object-fit: cover;
+    }
+
+    /* ── Actions ── */
+    .actions-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 6px;
+    }
+
+    .btn-blue, .btn-green { width: 100%; text-align: center; text-decoration: none; display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-wrapper">
+
+    <div class="page-header">
+        <h1>📊 Résultat de l'analyse</h1>
+        <p>Diagnostic généré par le modèle IA VGG16</p>
+    </div>
+
+    <!-- Main result card -->
+    <div class="card">
+        <div class="result-hero">
+            {% if result == 'Benign' %}
+                <div class="result-icon">✅</div>
+                <div class="result-label benign">Tumeur Bénigne</div>
+            {% else %}
+                <div class="result-icon">⚠️</div>
+                <div class="result-label malignant">Tumeur Maligne</div>
+            {% endif %}
+            <div class="result-sub">Analyse IA complétée avec succès</div>
+        </div>
+
+        <div class="confidence-row">
+            <div class="conf-ring {{ result | lower }}">
+                <div class="conf-num">{{ prob }}%</div>
+                <div class="conf-lbl">Score</div>
+            </div>
+            <div class="conf-info {{ result | lower }}">
+                <div class="conf-title">Confiance du modèle</div>
+                {% if result == 'Benign' %}
+                    <div class="conf-value">{{ (100 - prob) | round(1) }}%</div>
+                    <div class="conf-detail">Probabilité bénigne</div>
+                {% else %}
+                    <div class="conf-value">{{ prob }}%</div>
+                    <div class="conf-detail">Probabilité maligne</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if result == 'Benign' %}
+        <div class="reco-banner benign">
+            <i class="ti ti-shield-check"></i>
+            Aucun suivi urgent requis — contrôle de routine recommandé dans 12 mois
+        </div>
+        {% else %}
+        <div class="reco-banner malignant">
+            <i class="ti ti-urgent"></i>
+            Suivi médical requis — consultation spécialisée recommandée rapidement
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Image analysée -->
+    {% if img %}
+    <div class="card image-card">
+        <div class="card-title" style="justify-content:center;margin-bottom:14px">
+            <i class="ti ti-photo"></i> Image analysée
+        </div>
+        <img src="/{{ img }}" alt="Image analysée">
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="card">
+        <div class="card-title" style="margin-bottom:16px">
+            <i class="ti ti-arrows-right-left"></i> Que faire ensuite ?
+        </div>
+        <div class="actions-row">
+            <a href="/predict" class="btn-blue">
+                <i class="ti ti-microscope" style="font-size:14px;vertical-align:-2px;margin-right:5px"></i>
+                Nouvelle analyse
+            </a>
+            <a href="/patients" class="btn-green">
+                <i class="ti ti-clipboard-list" style="font-size:14px;vertical-align:-2px;margin-right:5px"></i>
+                Voir les patients
+            </a>
+        </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#B0BEC5;margin-top:6px;padding-bottom:10px">
+        ⚕️ Cet outil est une aide au diagnostic. Il ne remplace pas l'expertise d'un dermatologue.
+    </div>
+
+</div>
+{% endblock %}

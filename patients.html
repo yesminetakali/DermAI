@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Patients — DermAI{% endblock %}
+
+{% block extra_style %}
+<style>
+    .page-header {
+        display: flex; align-items: center;
+        justify-content: space-between; margin-bottom: 22px;
+    }
+    .page-header h1 { font-size: 22px; font-weight: 700; color: #1A2B45; margin-bottom: 3px; }
+    .page-header p  { font-size: 13px; color: #6B7D8F; }
+
+    .patients-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .patients-table th {
+        font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: .07em; color: #90A4AE;
+        padding: 10px 14px; border-bottom: 1.5px solid #EBF2FA; text-align: left;
+    }
+
+    .patients-table td {
+        padding: 12px 14px; border-bottom: 1px solid #F0F5FB;
+        color: #2D3748; vertical-align: middle;
+    }
+
+    .patients-table tr:last-child td { border-bottom: none; }
+    .patients-table tr:hover td { background: #FAFCFF; }
+
+    .patient-name { font-weight: 600; color: #1A2B45; }
+
+    .badge {
+        display: inline-block; font-size: 11px;
+        font-weight: 700; padding: 4px 11px; border-radius: 20px;
+    }
+    .badge.benign    { background: #E8F5E9; color: #2E7D32; }
+    .badge.malignant { background: #FFEBEE; color: #C62828; }
+
+    .prob-cell { display: flex; align-items: center; gap: 8px; }
+    .prob-bar-bg {
+        width: 70px; height: 5px; background: #EBF2FA;
+        border-radius: 4px; overflow: hidden; flex-shrink: 0;
+    }
+    .prob-bar-fill { height: 100%; border-radius: 4px; }
+    .fill-benign    { background: #43A047; }
+    .fill-malignant { background: #E53935; }
+    .prob-text { font-size: 12px; color: #6B7D8F; font-weight: 500; }
+
+    .date-text { color: #90A4AE; font-size: 12px; }
+
+    .btn-delete {
+        font-size: 11px; font-weight: 700; color: #E53935;
+        text-decoration: none; padding: 4px 10px;
+        background: #FFEBEE; border-radius: 20px;
+        border: 1px solid #FFCDD2; white-space: nowrap;
+    }
+    .btn-delete:hover { background: #FFCDD2; }
+
+    .empty-state { text-align: center; padding: 48px 20px; color: #90A4AE; }
+    .empty-icon  { font-size: 42px; margin-bottom: 12px; }
+    .empty-title { font-size: 15px; font-weight: 700; color: #5C6B7A; margin-bottom: 6px; }
+    .empty-sub   { font-size: 13px; }
+
+    .count-badge {
+        background: #E3F2FD; color: #1565C0;
+        font-size: 12px; font-weight: 700;
+        padding: 4px 12px; border-radius: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>📋 Liste des patients</h1>
+        <p>Historique de toutes les analyses effectuées</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+        <span class="count-badge">{{ patients|length }} patient{% if patients|length > 1 %}s{% endif %}</span>
+        <a href="/predict" class="btn-blue" style="padding:9px 18px;font-size:12px;text-decoration:none">
+            <i class="ti ti-plus" style="font-size:13px;vertical-align:-2px;margin-right:4px"></i>
+            Nouvelle analyse
+        </a>
+    </div>
+</div>
+
+<div class="card" style="padding:0;overflow:hidden">
+    {% if patients %}
+    <table class="patients-table">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Âge</th>
+                <th>Résultat</th>
+                <th>Probabilité</th>
+                <th>Image</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in patients %}
+            <tr>
+                <td class="patient-name">{{ p.name }}</td>
+                <td>{{ p.age }} ans</td>
+                <td>
+                    <span class="badge {{ p.result | lower }}">
+                        {% if p.result == 'Benign' %}✅ Bénin{% else %}⚠️ Malin{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <div class="prob-cell">
+                        <div class="prob-bar-bg">
+                            <div class="prob-bar-fill fill-{{ p.result | lower }}"
+                                 style="width:{{ (p.probability * 100) | round | int }}%"></div>
+                        </div>
+                        <span class="prob-text">{{ (p.probability * 100) | round(1) }}%</span>
+                    </div>
+                </td>
+                <td>
+                    {% if p.image_path %}
+                    <a href="/{{ p.image_path }}" target="_blank"
+                       style="font-size:11px;color:#1565C0;font-weight:600;text-decoration:none">
+                        <i class="ti ti-photo" style="font-size:13px;vertical-align:-2px;margin-right:3px"></i>Voir
+                    </a>
+                    {% else %}—{% endif %}
+                </td>
+                <td class="date-text">
+                    {% if p.created_at %}
+                        {{ p.created_at.strftime('%d/%m/%Y') }}
+                    {% else %}—{% endif %}
+                </td>
+                <td>
+                    <a href="/delete/{{ p.id }}"
+                       class="btn-delete"
+                       onclick="return confirm('Supprimer ce patient ?')">
+                        🗑 Supprimer
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔬</div>
+        <div class="empty-title">Aucun patient enregistré</div>
+        <div class="empty-sub">Commencez par effectuer une nouvelle analyse</div>
+        <br>
+        <a href="/predict" class="btn-blue" style="text-decoration:none;display:inline-block;margin-top:8px">
+            Démarrer une analyse →
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

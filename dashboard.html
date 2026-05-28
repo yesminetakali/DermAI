@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — DermAI{% endblock %}
+
+{% block extra_style %}
+<style>
+    .greeting {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+    }
+    .greeting h1 { font-size: 23px; font-weight: 700; color: #1A2B45; margin-bottom: 4px; }
+    .greeting p  { font-size: 13px; color: #6B7D8F; }
+
+    .date-badge {
+        display: flex; align-items: center; gap: 7px;
+        background: #fff; border: 1px solid #DCE8F5;
+        border-radius: 10px; padding: 9px 15px;
+        font-size: 12px; font-weight: 500; color: #5C6B7A;
+    }
+    .date-badge i { color: #1565C0; font-size: 14px; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 12px; margin-bottom: 16px;
+    }
+    .stat-card {
+        background: #fff; border-radius: 14px;
+        padding: 20px 22px; border: 1.5px solid transparent;
+        position: relative; overflow: hidden;
+    }
+    .stat-card.total  { border-color: #BBDEFB; }
+    .stat-card.benign { border-color: #C8E6C9; }
+    .stat-card.malig  { border-color: #FFCDD2; }
+
+    .stat-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-size: 11px; font-weight: 700;
+        padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
+    }
+    .stat-card.total  .stat-badge { background: #E3F2FD; color: #1565C0; }
+    .stat-card.benign .stat-badge { background: #E8F5E9; color: #2E7D32; }
+    .stat-card.malig  .stat-badge { background: #FFEBEE; color: #C62828; }
+
+    .stat-num { font-size: 38px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+    .stat-card.total  .stat-num { color: #1565C0; }
+    .stat-card.benign .stat-num { color: #2E7D32; }
+    .stat-card.malig  .stat-num { color: #C62828; }
+
+    .stat-label { font-size: 12px; color: #6B7D8F; font-weight: 500; }
+
+    .stat-bar { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    .bar-bg { flex: 1; height: 5px; background: #F0F4F8; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; }
+    .stat-card.benign .bar-fill { background: #43A047; }
+    .stat-card.malig  .bar-fill { background: #E53935; }
+    .bar-pct { font-size: 11px; font-weight: 700; color: #9AABB8; }
+
+    .stat-deco { position: absolute; right: -8px; bottom: -8px; font-size: 54px; opacity: .06; }
+    .stat-card.total  .stat-deco { color: #1565C0; }
+    .stat-card.benign .stat-deco { color: #2E7D32; }
+    .stat-card.malig  .stat-deco { color: #C62828; }
+
+    .section-divider {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 11px; font-weight: 700; color: #90A4AE;
+        letter-spacing: .08em; text-transform: uppercase;
+        margin: 16px 0 14px;
+    }
+    .section-divider::before, .section-divider::after {
+        content: ''; flex: 1; height: 1px; background: #DCE8F5;
+    }
+
+    .actions-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .action-card {
+        border-radius: 14px; padding: 22px;
+        text-decoration: none; color: #1A2B45;
+        display: flex; flex-direction: column;
+        border: 1.5px solid transparent;
+        transition: transform .18s, box-shadow .18s;
+    }
+    .action-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(21,101,192,.1); }
+    .action-card.analyze  { background: #E3F2FD; border-color: #BBDEFB; }
+    .action-card.patients { background: #E8F5E9; border-color: #C8E6C9; }
+
+    .action-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .action-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .action-card.analyze  .action-icon { background: #BBDEFB; }
+    .action-card.patients .action-icon { background: #C8E6C9; }
+
+    .action-tag { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; }
+    .action-card.analyze  .action-tag { background: #1565C0; color: #fff; }
+    .action-card.patients .action-tag { background: #2E7D32; color: #fff; }
+
+    .action-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+    .action-card p  { font-size: 12px; line-height: 1.65; color: #5C6B7A; margin-bottom: 16px; }
+
+    .action-btn {
+        margin-top: auto; display: inline-block;
+        font-size: 12px; font-weight: 700;
+        padding: 9px 18px; border-radius: 20px; align-self: flex-start;
+    }
+    .action-card.analyze  .action-btn { background: #1565C0; color: #fff; }
+    .action-card.patients .action-btn { background: #2E7D32; color: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Greeting -->
+<div class="greeting">
+    <div>
+        <h1>Bonjour, {{ session.user }} 👋</h1>
+        <p>Voici le résumé de votre activité médicale aujourd'hui</p>
+    </div>
+    <div class="date-badge">
+        <i class="ti ti-calendar"></i>
+        Tableau de bord DermAI
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card total">
+        <div class="stat-badge"><i class="ti ti-users" style="font-size:12px"></i> Total patients</div>
+        <div class="stat-num">{{ stats.total }}</div>
+        <div class="stat-label">Analyses enregistrées</div>
+        <div class="stat-deco"><i class="ti ti-users"></i></div>
+    </div>
+    <div class="stat-card benign">
+        <div class="stat-badge"><i class="ti ti-shield-check" style="font-size:12px"></i> Bénins</div>
+        <div class="stat-num">{{ stats.benign }}</div>
+        <div class="stat-label">Résultats négatifs</div>
+        {% if stats.total > 0 %}
+        <div class="stat-bar">
+            <div class="bar-bg"><div class="bar-fill" style="width:{{ ((stats.benign / stats.total) * 100) | round | int }}%"></div></div>
+            <span class="bar-pct">{{ ((stats.benign / stats.total) * 100) | round(1) }}%</span>
+        </div>
+        {% endif %}
+        <div class="stat-deco"><i class="ti ti-shield-check"></i></div>
+    </div>
+    <div class="stat-card malig">
+        <div class="stat-badge"><i class="ti ti-alert-triangle" style="font-size:12px"></i> Malins</div>
+        <div class="stat-num">{{ stats.malignant }}</div>
+        <div class="stat-label">Nécessitent suivi</div>
+        {% if stats.total > 0 %}
+        <div class="stat-bar">
+            <div class="bar-bg"><div class="bar-fill" style="width:{{ ((stats.malignant / stats.total) * 100) | round | int }}%"></div></div>
+            <span class="bar-pct">{{ ((stats.malignant / stats.total) * 100) | round(1) }}%</span>
+        </div>
+        {% endif %}
+        <div class="stat-deco"><i class="ti ti-alert-triangle"></i></div>
+    </div>
+</div>
+
+<!-- Divider -->
+<div class="section-divider">Actions rapides</div>
+
+<!-- Actions -->
+<div class="actions-grid">
+    <a href="/predict" class="action-card analyze">
+        <div class="action-top">
+            <div class="action-icon">🔬</div>
+            <span class="action-tag">IA · Instant</span>
+        </div>
+        <h3>Nouvelle Analyse</h3>
+        <p>Uploadez une image dermatologique et obtenez un diagnostic instantané par notre modèle IA.</p>
+        <span class="action-btn">Démarrer l'analyse →</span>
+    </a>
+    <a href="/patients" class="action-card patients">
+        <div class="action-top">
+            <div class="action-icon">📋</div>
+            <span class="action-tag">Historique</span>
+        </div>
+        <h3>Liste des Patients</h3>
+        <p>Consultez l'historique complet de toutes les analyses effectuées et leurs résultats.</p>
+        <span class="action-btn">Voir les patients →</span>
+    </a>
+</div>
+
+{% endblock %}
