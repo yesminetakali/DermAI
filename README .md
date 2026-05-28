@@ -3,10 +3,9 @@
 > Développé par **Takali Yasmine**
 
 ![Python](https://img.shields.io/badge/Python-3.11.9-blue?style=flat-square&logo=python)
-![Flask](https://img.shields.io/badge/Flask-2.x-black?style=flat-square&logo=flask)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?style=flat-square&logo=tensorflow)
-![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=flat-square&logo=mysql)
-
+![Flask](https://img.shields.io/badge/Flask-3.1.3-black?style=flat-square&logo=flask)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.21.0-orange?style=flat-square&logo=tensorflow)
+![MySQL](https://img.shields.io/badge/MySQL-8.2.12-blue?style=flat-square&logo=mysql)
 ---
 
 ## 📌 Description
