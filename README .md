@@ -2,7 +2,7 @@
 
 > Développé par **Takali Yasmine**
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square&logo=python)
+![Python](https://img.shields.io/badge/Python-3.11.9-blue?style=flat-square&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-2.x-black?style=flat-square&logo=flask)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange?style=flat-square&logo=tensorflow)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=flat-square&logo=mysql)
@@ -157,7 +157,7 @@ CREATE TABLE patients (
 ## ⚙️ Installation
 
 ### Prérequis
-- Python 3.8+
+- Python 3.11.9
 - XAMPP (Apache + MySQL)
 - pip
 
