@@ -164,7 +164,7 @@ CREATE TABLE patients (
 
 **1. Cloner le projet**
 ```bash
-git clone https://github.com/votre-username/DermAI.git
+git clone https://github.com/yesminetakali/DermAI.git
 cd DermAI
 ```
 
