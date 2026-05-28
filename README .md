@@ -17,8 +17,7 @@ DermAI est une application web médicale d'aide au diagnostic dermatologique bas
 
 ## 🎥 Démonstration
 
-[![Démonstration DermAI](dashboard.png)](screenshots/demo.mp4)
-
+[▶️ Cliquez ici pour voir la démonstration](https://drive.google.com/file/d/1ux0E8RSk0rNIv7zsm2voBLxbWLXJkPLy/view?usp=sharing)
 > Cliquez sur l'image pour voir la démonstration complète sur Google Drive.
 
 ---
