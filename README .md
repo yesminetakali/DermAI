@@ -200,11 +200,11 @@ http://localhost:5000
 
 | Technologie | Rôle |
 |---|---|
-| Python 3 | Langage principal |
-| Flask | Framework web backend |
-| TensorFlow / Keras | Modèle de deep learning |
+| Python 3.11.9 | Langage principal |
+| Flask 3.1.3 | Framework web backend |
+| TensorFlow 2.21.0 / Keras | Modèle de deep learning |
 | VGG16 | Architecture CNN (Transfer Learning) |
-| MySQL | Base de données |
+| MySQL 8.2.12 | Base de données |
 | XAMPP | Serveur local |
 | HTML / CSS | Interface utilisateur |
 
